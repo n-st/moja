@@ -14,11 +14,18 @@ parser.add_argument('inputfile', type=argparse.FileType('r'), help="Path of the 
 parser.add_argument('outputfile', type=argparse.FileType('w'), help="Path of the output file where the processed image will be saved. Will be overwritten if it exists.")
 parser.add_argument('-b', '--bgcolor', type=str, default='white', help="Background color that will be applied to all transparent areas in the image. Defaults to 'white', can be set to 'transparent' if desired. This string will be passed directly to ImageMagick, so any color specifier understood by ImageMagick can be used.")
 parser.add_argument('-s', '--size', type=float, default='0', help="Change the computed optimal image size by <x> percent, i.e. add more or less than the optimal border size. Accepts positive and negative numbers, including ones with decimal places: +10, -5.432, etc.")
+parser.add_argument('-t', '--transparent-color', type=str, default=None, help="Replace the given color (in any notation understood by ImageMagick) with transparency. By default, no such replacement is applied.")
 
 args = parser.parse_args()
 
 with Image(filename=args.inputfile.name) as img:
     print('Loaded %s' % args.inputfile.name)
+
+    if args.transparent_color:
+        print('Replacing \'%s\' with transparency' % args.transparent_color)
+        img.alpha_channel = 'activate'
+        with Color(args.transparent_color) as c:
+            img.transparent_color(color=c, alpha=0.0, fuzz=10)
 
     img.trim()
 
