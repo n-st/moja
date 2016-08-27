@@ -5,15 +5,29 @@ from wand.color import Color
 from wand.drawing import Drawing
 from wand.display import display
 from math import sqrt, ceil
-from sys import stderr
+from sys import stdout
 
-with Image(filename='/tmp/beermugs.png') as img:
+import argparse
+
+parser = argparse.ArgumentParser(description='Enlarge an image to allow for circular cropping without losing any colored pixels')
+parser.add_argument('inputfile', type=argparse.FileType('r'), help="Path of the input image to be read and processed.")
+parser.add_argument('outputfile', type=argparse.FileType('w'), help="Path of the output file where the processed image will be saved. Will be overwritten if it exists.")
+parser.add_argument('-b', '--bgcolor', type=str, default='white', help="Background color that will be applied to all transparent areas in the image. Defaults to 'white', can be set to 'transparent' if desired. This string will be passed directly to ImageMagick, so any color specifier understood by ImageMagick can be used.")
+parser.add_argument('-s', '--size', type=float, default='0', help="Change the computed optimal image size by <x> percent, i.e. add more or less than the optimal border size. Accepts positive and negative numbers, including ones with decimal places: +10, -5.432, etc.")
+
+args = parser.parse_args()
+
+with Image(filename=args.inputfile.name) as img:
+    print('Loaded %s' % args.inputfile.name)
+
     img.trim(color=Color('none'))
+
     max_dim = max(img.size)
     center = max_dim/2
+
     r = 0
     while r < center:
-        stderr.write('\rProgress >= %.0f%%' % (100*r/center))
+        stdout.write('\rProgress >= %.0f%%' % (100*r/center))
         tmp_img = img.clone()
         with Drawing() as draw:
             draw.stroke_antialias = False
@@ -25,12 +39,20 @@ with Image(filename='/tmp/beermugs.png') as img:
             max_r = r - 1
             break
         r += 1
-    stderr.write('\r')
+    stdout.write('\r')
+
     encompassing_radius = sqrt(center**2 + (center - max_r)**2)
-    encompassing_radius *= 1.05 # relax the border a little
     print('Radius of smallest circle encompassing all non-transparent pixels: %d' % ceil(encompassing_radius))
+
+    size_offset = 1 + (args.size/100)
+    if size_offset != 1:
+        print('%s optimal size by %d%%' % ('Increasing' if size_offset > 1 else 'Reducing', abs(args.size)))
+        encompassing_radius *= size_offset # relax the border a little
+
     width = 2*ceil(encompassing_radius)
-    print('Put the image in the center of a %dx%d px canvas to allow for circular cropping without losing pixels.' % (width, width))
+    print('Putting the image in the center of a %dx%d px canvas to allow for circular cropping without losing pixels' % (width, width))
+    print('New background color: %s' % args.bgcolor)
+
     frame_vert = ceil((width - img.height)/2)
     frame_horz = ceil((width - img.width)/2)
     img.frame(width=frame_vert, height=frame_horz, matte=Color('none'))
@@ -39,9 +61,11 @@ with Image(filename='/tmp/beermugs.png') as img:
     img.page_x = 0
     img.page_y = 0
 
-    img.background_color = Color('forestgreen')
+    img.background_color = Color(args.bgcolor)
     img.alpha_channel = 'remove'
 
-    img.save(filename='/tmp/pythoned.png')
+    img.save(filename=args.outputfile.name)
+
+    print('Processed image written to %s' % args.outputfile.name)
 
 # vim: set ft=python ts=8 sw=4 tw=0 et :
