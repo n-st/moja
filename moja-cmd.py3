@@ -20,7 +20,7 @@ args = parser.parse_args()
 with Image(filename=args.inputfile.name) as img:
     print('Loaded %s' % args.inputfile.name)
 
-    img.trim(color=Color('none'))
+    img.trim()
 
     max_dim = max(img.size)
     center = max_dim/2
