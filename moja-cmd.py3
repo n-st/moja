@@ -15,6 +15,7 @@ parser.add_argument('outputfile', type=argparse.FileType('w'), help="Path of the
 parser.add_argument('-b', '--bgcolor', type=str, default='white', help="Background color that will be applied to all transparent areas in the image. Defaults to 'white', can be set to 'transparent' if desired. This string will be passed directly to ImageMagick, so any color specifier understood by ImageMagick can be used.")
 parser.add_argument('-s', '--size', type=float, default='0', help="Change the computed optimal image size by <x> percent, i.e. add more or less than the optimal border size. Accepts positive and negative numbers, including ones with decimal places: +10, -5.432, etc.")
 parser.add_argument('-t', '--transparent-color', type=str, default=None, help="Replace the given color (in any notation understood by ImageMagick) with transparency. By default, no such replacement is applied.")
+parser.add_argument('-d', '--output-size', type=str, default=None, help="Resizes the output image to the given size (in ImageMagick notation, e.g. 512x512).")
 
 args = parser.parse_args()
 
@@ -70,6 +71,10 @@ with Image(filename=args.inputfile.name) as img:
 
     img.background_color = Color(args.bgcolor)
     img.alpha_channel = 'remove'
+
+    if args.output_size:
+        print('Resizing image to %s' % args.output_size)
+        img.transform(resize=args.output_size)
 
     img.save(filename=args.outputfile.name)
 
