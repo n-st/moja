@@ -8,6 +8,8 @@ Main use case: Transforming rendered emojis into avatars that can be used on
 any of the modern messenger services that apply a circular mask when displaying
 user avatars.
 
+![example of transformation process and final result](https://github.com/n-st/moja/blob/master/example.png)
+
 Requirements
 ------------
 
