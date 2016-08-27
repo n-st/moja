@@ -55,7 +55,7 @@ with Image(filename=args.inputfile.name) as img:
 
     frame_vert = ceil((width - img.height)/2)
     frame_horz = ceil((width - img.width)/2)
-    img.frame(width=frame_vert, height=frame_horz, matte=Color('none'))
+    img.frame(width=frame_horz, height=frame_vert, matte=Color('none'))
 
     # reset image offset
     img.page_x = 0
