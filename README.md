@@ -1,4 +1,4 @@
-moja -- eMOJi Avatar generator
+moja — eMOJi Avatar generator
 ==============================
 
 Enlarges the canvas of an image with a transparent background, such that the
@@ -61,6 +61,7 @@ Examples
 
 In the second example, ImageMagick automatically converts from SVG to PNG based
 on the filename extension.
+
 The `-d` (`--output-size`) option is applied *after* the vector image is
 converted to a bitmap, so specifying an output size large than the SVG's native
 size (like in this case) will result in a blurred output image.
