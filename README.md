@@ -18,7 +18,9 @@ Usage
 -----
 
     $ ./moja-cmd.py3 -h
-    usage: moja-cmd.py3 [-h] [-b BGCOLOR] [-s SIZE] inputfile outputfile
+    usage: moja-cmd.py3 [-h] [-b BGCOLOR] [-s SIZE] [-t TRANSPARENT_COLOR]
+                        [-d OUTPUT_SIZE]
+                        inputfile outputfile
 
     Enlarge an image to allow for circular cropping without losing any colored
     pixels
@@ -40,12 +42,28 @@ Usage
                             i.e. add more or less than the optimal border size.
                             Accepts positive and negative numbers, including ones
                             with decimal places: +10, -5.432, etc.
+      -t TRANSPARENT_COLOR, --transparent-color TRANSPARENT_COLOR
+                            Replace the given color (in any notation understood by
+                            ImageMagick) with transparency. By default, no such
+                            replacement is applied.
+      -d OUTPUT_SIZE, --output-size OUTPUT_SIZE
+                            Resizes the output image to the given size (in
+                            ImageMagick notation, e.g. 512x512).
 
-Example
--------
+Examples
+--------
 
     wget https://github.com/Ranks/emojione/blob/master/assets/png_512x512/1f984.png?raw=true -O unicorn.png
     ./moja-cmd.py3 unicorn.png unicorn-avatarised.png -s +5 -b palegreen
+
+    wget https://ilias.uni-passau.de/ilias/Customizing/global/skin/upa/images/logo_up.svg
+    ./moja-cmd.py3 logo_up.svg uni-passau.png -t white -b '#9AC0CD' -d 1024x1024
+
+In the second example, ImageMagick automatically converts from SVG to PNG based
+on the filename extension.
+The `-d` (`--output-size`) option is applied *after* the vector image is
+converted to a bitmap, so specifying an output size large than the SVG's native
+size (like in this case) will result in a blurred output image.
 
 Todo
 ----
