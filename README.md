@@ -41,6 +41,12 @@ Usage
                             Accepts positive and negative numbers, including ones
                             with decimal places: +10, -5.432, etc.
 
+Example
+-------
+
+    wget https://github.com/Ranks/emojione/blob/master/assets/png_512x512/1f984.png?raw=true -O unicorn.png
+    ./moja-cmd.py3 unicorn.png unicorn-avatarised.png -s +5 -b palegreen
+
 Todo
 ----
 
