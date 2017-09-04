@@ -10,10 +10,11 @@ def process_image(img, transparent_color=None, background_color='white', size_of
     if verbose:
         from sys import stdout
 
+    img.alpha_channel = 'activate'
+
     if transparent_color:
         if verbose:
             print('Replacing \'%s\' with transparency' % transparent_color)
-        img.alpha_channel = 'activate'
         with Color(transparent_color) as c:
             img.transparent_color(color=c, alpha=0.0, fuzz=10)
 
